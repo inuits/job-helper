@@ -7,6 +7,5 @@ setup(
     description='Job helper to use with the job api',
     author='matthias.dillen@inuits.eu',
     license='MIT',
-    install_requires=[],
-    provides=['inuits-dams-job-helper']
+    install_requires=[]
 )
