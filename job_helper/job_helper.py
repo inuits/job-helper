@@ -2,6 +2,7 @@ import json
 import string
 from datetime import datetime
 from enum import Enum
+from flask import g
 import requests
 
 
@@ -21,14 +22,14 @@ class JobHelper:
             "{}/jobs/{}".format(self.job_api_base_url, job["_id"]), json=job
         ).json()
 
-    def create_new_job(self, job_info: string, job_type: string, user: string, asset_id=None, mediafile_id=None,
+    def create_new_job(self, job_info: string, job_type: string, asset_id=None, mediafile_id=None,
                        parent_job_id=None):
         new_job = {
             "job_type": job_type,
             "job_info": job_info,
             "status": Status.QUEUED.value,
             "start_time": str(datetime.utcnow()),
-            "user": user,
+            "user": g.oidc_token_info["email"] if hasattr(g, "oidc_token_info") else "default_uploader",
             "asset_id": "" if asset_id is None else asset_id,
             "mediafile_id": "" if mediafile_id is None else mediafile_id,
             "parent_job_id": "" if parent_job_id is None else parent_job_id
