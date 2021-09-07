@@ -21,7 +21,10 @@ class JobHelper:
         return requests.patch(
             "{}/jobs/{}".format(self.job_api_base_url, job["_id"]), json=job
         ).json()
-
+    def __get_parent_job(self, job):
+        return requests.get(
+            "{}/jobs/{}".format(self.job_api_base_url, job["parent_job_id"])
+        ).json()
     def create_new_job(self, job_info: string, job_type: string, asset_id=None, mediafile_id=None,
                        parent_job_id=None):
         new_job = {
@@ -50,7 +53,6 @@ class JobHelper:
             job["parent_job_id"] = parent_job_id
         if amount_of_jobs is not None:
             job["amount_of_jobs"] = amount_of_jobs
-        if count_up_completed_jobs:
             job["completed_jobs"] = job["completed_jobs"] + 1
         job["status"] = Status.IN_PROGRESS.value
         return self.__patch_job(job)
@@ -59,6 +61,9 @@ class JobHelper:
         job["status"] = Status.FINISHED.value
         job["completed_jobs"] = job["amount_of_jobs"]
         job["end_time"] = str(datetime.utcnow())
+        if job["parent_job_id"] is not "":
+            parent_job = self.__get_parent_job(job)
+            self.progress_job(parent_job, count_up_completed_jobs=True)
         return self.__patch_job(job)
 
     def fail_job(self, job, error_message=""):
