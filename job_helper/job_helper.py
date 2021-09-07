@@ -53,6 +53,7 @@ class JobHelper:
             job["parent_job_id"] = parent_job_id
         if amount_of_jobs is not None:
             job["amount_of_jobs"] = amount_of_jobs
+        if count_up_completed_jobs:
             job["completed_jobs"] = job["completed_jobs"] + 1
         job["status"] = Status.IN_PROGRESS.value
         return self.__patch_job(job)
