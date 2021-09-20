@@ -19,7 +19,7 @@ class JobHelper:
 
     def __patch_job(self, job):
         return requests.patch(
-            "{}/jobs/{}".format(self.job_api_base_url, job["_id"]), json=job
+            "{}/jobs/{}".format(self.job_api_base_url, job["_key"] if "_key" in job else job["_id"]), json=job
         ).json()
     def __get_parent_job(self, job):
         return requests.get(
