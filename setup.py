@@ -5,7 +5,7 @@ setup(
     version='0.1.7',
     description="Job helper to use with the job api",
     classifiers=[
-        'License :: OSI Approved :: GPLv2 License',
+        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3'
     ],
