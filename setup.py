@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='job_helper',
-    version='0.1.5',
+    version='0.1.6',
     description="Job helper to use with the job api",
     classifiers=[
         'License :: OSI Approved :: MIT License',
@@ -11,7 +11,7 @@ setup(
     ],
     author='Matthias Dillen',
     author_email='matthias.dillen@inuits.eu',
-    license='MIT',
+    license='GPLv2',
     packages=[
         'job_helper'
     ],
