@@ -14,16 +14,19 @@ class Status(Enum):
 
 
 class JobHelper:
-    def __init__(self, job_api_base_url):
+    def __init__(self, job_api_base_url, static_jwt=False):
         self.job_api_base_url = job_api_base_url
-
+        self.headers = {"Content-Type": "application/json", "Authorization": "Bearer {}".format(static_jwt)} if static_jwt is not False else {"Content-Type": "application/json"}
     def __patch_job(self, job):
         return requests.patch(
-            "{}/jobs/{}".format(self.job_api_base_url, job["_key"] if "_key" in job else job["_id"]), json=job
+            "{}/jobs/{}".format(self.job_api_base_url, job["_key"] if "_key" in job else job["_id"]),
+            json=job,
+            headers=self.headers
         ).json()
     def __get_parent_job(self, job):
         return requests.get(
-            "{}/jobs/{}".format(self.job_api_base_url, job["parent_job_id"])
+            "{}/jobs/{}".format(self.job_api_base_url, job["parent_job_id"]),
+            headers=self.headers
         ).json()
     def create_new_job(self, job_info: string, job_type: string, asset_id=None, mediafile_id=None,
                        parent_job_id=None):
@@ -40,7 +43,7 @@ class JobHelper:
             "amount_of_jobs": 1
         }
         job = json.loads(requests.post(
-            "{}/jobs".format(self.job_api_base_url), json=new_job
+            "{}/jobs".format(self.job_api_base_url), json=new_job, headers=self.headers
         ).text)
         return job
 
