@@ -16,38 +16,75 @@ class Status(Enum):
 class JobHelper:
     def __init__(self, job_api_base_url, static_jwt=False):
         self.job_api_base_url = job_api_base_url
-        self.headers = {"Content-Type": "application/json", "Authorization": "Bearer {}".format(static_jwt)} if static_jwt is not False else {"Content-Type": "application/json"}
+        self.headers = (
+            {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer {}".format(static_jwt),
+            }
+            if static_jwt is not False
+            else {"Content-Type": "application/json"}
+        )
+
     def __patch_job(self, job):
         return requests.patch(
-            "{}/jobs/{}".format(self.job_api_base_url, job["_key"] if "_key" in job else job["_id"]),
+            "{}/jobs/{}".format(
+                self.job_api_base_url, job["_key"] if "_key" in job else job["_id"]
+            ),
             json=job,
-            headers=self.headers
+            headers=self.headers,
         ).json()
+
     def __get_parent_job(self, job):
         return requests.get(
             "{}/jobs/{}".format(self.job_api_base_url, job["parent_job_id"]),
-            headers=self.headers
+            headers=self.headers,
         ).json()
-    def create_new_job(self, job_info: string, job_type: string, asset_id=None, mediafile_id=None,
-                       parent_job_id=None):
+
+    def __get_job(self, id):
+        return requests.get(
+            "{}/jobs/{}".format(self.job_api_base_url, id), headers=self.headers
+        ).json()
+
+    def create_new_job(
+        self,
+        job_info: string,
+        job_type: string,
+        asset_id=None,
+        mediafile_id=None,
+        parent_job_id=None,
+    ):
         new_job = {
             "job_type": job_type,
             "job_info": job_info,
             "status": Status.QUEUED.value,
             "start_time": str(datetime.utcnow()),
-            "user": g.oidc_token_info["email"] if hasattr(g, "oidc_token_info") else "default_uploader",
+            "user": g.oidc_token_info["email"]
+            if hasattr(g, "oidc_token_info")
+            else "default_uploader",
             "asset_id": "" if asset_id is None else asset_id,
             "mediafile_id": "" if mediafile_id is None else mediafile_id,
             "parent_job_id": "" if parent_job_id is None else parent_job_id,
             "completed_jobs": 0,
-            "amount_of_jobs": 1
+            "amount_of_jobs": 1,
         }
-        job = json.loads(requests.post(
-            "{}/jobs".format(self.job_api_base_url), json=new_job, headers=self.headers
-        ).text)
+        job = json.loads(
+            requests.post(
+                "{}/jobs".format(self.job_api_base_url),
+                json=new_job,
+                headers=self.headers,
+            ).text
+        )
         return job
 
-    def progress_job(self, job, asset_id=None, mediafile_id=None, parent_job_id=None, amount_of_jobs=None, count_up_completed_jobs=False):
+    def progress_job(
+        self,
+        job,
+        asset_id=None,
+        mediafile_id=None,
+        parent_job_id=None,
+        amount_of_jobs=None,
+        count_up_completed_jobs=False,
+    ):
         if asset_id is not None:
             job["asset_id"] = asset_id
         if mediafile_id is not None:
