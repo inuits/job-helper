@@ -1,5 +1,6 @@
 import json
 import string
+import uuid
 from datetime import datetime
 from enum import Enum
 from flask import g
@@ -49,6 +50,7 @@ class JobHelper:
         self,
         job_info: string,
         job_type: string,
+        identifier: uuid.uuid1,
         asset_id=None,
         mediafile_id=None,
         parent_job_id=None,
@@ -66,6 +68,7 @@ class JobHelper:
             "parent_job_id": "" if parent_job_id is None else parent_job_id,
             "completed_jobs": 0,
             "amount_of_jobs": 1,
+            "identifiers": [identifier],
         }
         job = json.loads(
             requests.post(
@@ -78,13 +81,14 @@ class JobHelper:
 
     def progress_job(
         self,
-        job,
+        job_identifier,
         asset_id=None,
         mediafile_id=None,
         parent_job_id=None,
         amount_of_jobs=None,
         count_up_completed_jobs=False,
     ):
+        job = self.__get_job(job_identifier)
         if asset_id is not None:
             job["asset_id"] = asset_id
         if mediafile_id is not None:
@@ -98,7 +102,8 @@ class JobHelper:
         job["status"] = Status.IN_PROGRESS.value
         return self.__patch_job(job)
 
-    def finish_job(self, job):
+    def finish_job(self, job_identifier):
+        job = self.__get_job(job_identifier)
         job["status"] = Status.FINISHED.value
         job["completed_jobs"] = job["amount_of_jobs"]
         job["end_time"] = str(datetime.utcnow())
@@ -107,7 +112,8 @@ class JobHelper:
             self.progress_job(parent_job, count_up_completed_jobs=True)
         return self.__patch_job(job)
 
-    def fail_job(self, job, error_message=""):
+    def fail_job(self, job_identifier, error_message=""):
+        job = self.__get_job(job_identifier)
         job["status"] = Status.FAILED.value
         job["end_time"] = str(datetime.utcnow())
         job["error_message"] = error_message
