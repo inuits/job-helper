@@ -41,7 +41,7 @@ class JobExtension:
             "parent_job_id": "" if parent_job_id is None else parent_job_id,
             "completed_jobs": 0,
             "amount_of_jobs": 1,
-            "identifiers": [uuid.uuid1()],
+            "identifiers": [str(uuid.uuid1())],
         }
         self.__send_cloud_event(new_job, "dams.job_created")
         return new_job
