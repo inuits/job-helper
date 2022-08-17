@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import g
 
-from job_helper.job_extension import Status
+from job_helper.Status import Status
 
 
 class Job:

@@ -1,19 +1,12 @@
 import json
 import string
 from datetime import datetime
-from enum import Enum
 
 from cloudevents.http import CloudEvent, to_json
 from rabbitmq_pika_flask import RabbitMQ
 
+from job_helper.Status import Status
 from job_helper.Job import Job
-
-
-class Status(Enum):
-    QUEUED = "queued"
-    IN_PROGRESS = "in-progress"
-    FINISHED = "finished"
-    FAILED = "failed"
 
 
 class JobExtension:
