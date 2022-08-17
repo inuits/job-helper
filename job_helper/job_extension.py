@@ -6,7 +6,7 @@ from enum import Enum
 from cloudevents.http import CloudEvent, to_json
 from rabbitmq_pika_flask import RabbitMQ
 
-from Job import Job
+from job_helper.Job import Job
 
 
 class Status(Enum):
