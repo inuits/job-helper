@@ -57,7 +57,6 @@ class JobExtension:
         return job
 
     def finish_job(self, job, parent_job=None):
-        job.finish(parent_job)
         job.status = Status.FINISHED.value
         job.completed_jobs = job.amount_of_jobs
         job.end_time = str(datetime.utcnow())
