@@ -23,11 +23,10 @@ class Job:
         self.job_info = job_info
         self.status = status
         self.start_time = str(datetime.utcnow())
-        self.user = (
-            g.oidc_token_info["email"]
-            if hasattr(g, "oidc_token_info")
-            else "default_uploader",
-        )
+        if hasattr(g, "oidc_token_info"):
+            self.user = g.oidc_token_info["email"]
+        else:
+            self.user = "default_uploader"
         self.asset_id = asset_id
         self.mediafile_id = mediafile_id
         self.parent_job_id = parent_job_id
