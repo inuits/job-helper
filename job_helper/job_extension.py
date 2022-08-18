@@ -29,7 +29,7 @@ class JobExtension:
             parent_job_id=parent_job_id,
         )
 
-        self.__send_cloud_event(new_job, "dams.job_created")
+        self.__send_cloud_event(new_job.__dict__, "dams.job_created")
         return new_job
 
     def progress_job(
@@ -53,7 +53,7 @@ class JobExtension:
         if count_up_completed_jobs:
             job.count_up_completed_jobs()
         job.status = Status.IN_PROGRESS.value
-        self.__send_cloud_event(job, "dams.job_changed")
+        self.__send_cloud_event(job.__dict__, "dams.job_changed")
         return job
 
     def finish_job(self, job, parent_job=None):
@@ -63,14 +63,14 @@ class JobExtension:
         job.end_time = str(datetime.utcnow())
         if job.parent_job_id not in ["", None] and parent_job is not None:
             self.progress_job(parent_job, count_up_completed_jobs=True)
-        self.__send_cloud_event(job, "dams.job_changed")
+        self.__send_cloud_event(job.__dict__, "dams.job_changed")
         return job
 
     def fail_job(self, job, error_message=""):
         job.status = Status.FAILED.value
         job.end_time = str(datetime.utcnow())
         job.error_message = error_message
-        self.__send_cloud_event(job, "dams.job_changed")
+        self.__send_cloud_event(job.__dict__, "dams.job_changed")
         return job
 
     def __send_cloud_event(self, job, event_type):
