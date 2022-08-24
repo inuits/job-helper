@@ -1,12 +1,12 @@
 import json
 import string
+
+from cloudevents.conversion import to_dict
+from cloudevents.http import CloudEvent
 from datetime import datetime
-
-from cloudevents.http import CloudEvent, to_json
-from rabbitmq_pika_flask import RabbitMQ
-
-from job_helper.Status import Status
 from job_helper.Job import Job
+from job_helper.Status import Status
+from rabbitmq_pika_flask import RabbitMQ
 
 
 class JobExtension:
@@ -74,6 +74,5 @@ class JobExtension:
 
     def __send_cloud_event(self, job, event_type):
         attributes = {"type": event_type, "source": "dams"}
-        event = CloudEvent(attributes, job)
-        message = json.loads(to_json(event))
-        self.rabbit.send(message, routing_key=event_type)
+        event = to_dict(CloudEvent(attributes, job))
+        self.rabbit.send(event, routing_key=event_type)
