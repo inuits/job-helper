@@ -1,4 +1,3 @@
-import json
 import string
 
 from cloudevents.conversion import to_dict
@@ -28,7 +27,6 @@ class JobExtension:
             mediafile_id=mediafile_id,
             parent_job_id=parent_job_id,
         )
-
         self.__send_cloud_event(new_job.__dict__, "dams.job_created")
         return new_job
 
@@ -41,7 +39,6 @@ class JobExtension:
         amount_of_jobs=None,
         count_up_completed_jobs=False,
     ):
-
         if asset_id is not None:
             job.asset_id = asset_id
         if mediafile_id is not None:
@@ -56,19 +53,20 @@ class JobExtension:
         self.__send_cloud_event(job.__dict__, "dams.job_changed")
         return job
 
-    def finish_job(self, job, parent_job=None):
+    def finish_job(self, job, parent_job=None, message=""):
         job.status = Status.FINISHED.value
         job.completed_jobs = job.amount_of_jobs
         job.end_time = str(datetime.utcnow())
+        job.message = message
         if job.parent_job_id not in ["", None] and parent_job is not None:
             self.progress_job(parent_job, count_up_completed_jobs=True)
         self.__send_cloud_event(job.__dict__, "dams.job_changed")
         return job
 
-    def fail_job(self, job, error_message=""):
+    def fail_job(self, job, message=""):
         job.status = Status.FAILED.value
         job.end_time = str(datetime.utcnow())
-        job.error_message = error_message
+        job.message = message
         self.__send_cloud_event(job.__dict__, "dams.job_changed")
         return job
 
