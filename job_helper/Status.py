@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Status(Enum):
-    QUEUED = "queued"
-    IN_PROGRESS = "in-progress"
-    FINISHED = "finished"
     FAILED = "failed"
+    FINISHED = "finished"
+    IN_PROGRESS = "in-progress"
+    QUEUED = "queued"

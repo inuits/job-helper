@@ -19,6 +19,7 @@ class JobExtension:
         asset_id=None,
         mediafile_id=None,
         parent_job_id=None,
+        user=None,
     ):
         new_job = Job(
             job_type=job_type,
@@ -26,6 +27,7 @@ class JobExtension:
             asset_id=asset_id,
             mediafile_id=mediafile_id,
             parent_job_id=parent_job_id,
+            user=user,
         )
         self.__send_cloud_event(new_job.__dict__, "dams.job_created")
         return new_job

@@ -1,8 +1,6 @@
 import uuid
+
 from datetime import datetime
-
-from flask import g
-
 from job_helper.Status import Status
 
 
@@ -17,16 +15,14 @@ class Job:
         status=Status.QUEUED.value,
         completed_jobs=0,
         amount_of_jobs=1,
+        user=None,
     ):
         self.end_time = None
         self.job_type = job_type
         self.job_info = job_info
         self.status = status
         self.start_time = str(datetime.utcnow())
-        if hasattr(g, "oidc_token_info"):
-            self.user = g.oidc_token_info["email"]
-        else:
-            self.user = "default_uploader"
+        self.user = user if user else "default_uploader"
         self.asset_id = asset_id
         self.mediafile_id = mediafile_id
         self.parent_job_id = parent_job_id
